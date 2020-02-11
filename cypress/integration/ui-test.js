@@ -1,8 +1,19 @@
 /// <reference types="Cypress" />
 
 const link = "https://seubarriga.wcaquino.me/";
-//const link_simulador = "";
 
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
+
+ var value;
 
 context('Automated UI Test for "Seu Barriga', () => {
     
@@ -26,9 +37,31 @@ context('Automated UI Test for "Seu Barriga', () => {
         cy.visit(link);
         cy.get(':nth-child(2) > a').click(); 
         cy.get('#nome').type('vitor');
-        cy.get('#email').type('vitoor@gmail.com');
+        cy.get('#email').type(makeid(5) + '@gmail.com');
+        value = cy.get('#email').nodeValue;
         cy.get('#senha').type('123');
         cy.get('.btn').click();
+        cy.get('.alert').should('be.visible').contains('Usuário inserido com sucesso');
+    })
+
+    it('3: Validate Login', () => {
+        cy.visit(link);
+        cy.get('#email').type(value + '@gmail.com');
+        cy.get('#senha').type('123');
+        cy.get('.btn').click();
+        cy.get('.alert').should('be.visible').contains('Bem vindo')
+    })
+
+    it('4: Validate Adicionar Conta', () => {
+        cy.visit(link);
+        cy.get('#email').type('vitor@gmail.com');
+        cy.get('#senha').type('123');
+        cy.get('.btn').click();
+        cy.get('.dropdown-toggle').click(); 
+        cy.get('.dropdown-menu > :nth-child(1) > a').click();
+        cy.get('#nome').type('aluguel janeiro');
+        cy.get('.btn').click();
+        cy.get('.alert').should('be.visible').contains('Conta adicionada com sucesso!')
     })
     
 })
